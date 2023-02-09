@@ -19,7 +19,6 @@ enum class ProcState {NEW, READY, RUNNING, WAITING, TERMINATED};
    A process should have at least an ID and a state(i.e.NEW, READY, RUNNING, WAITING or TERMINATED).
    It may also have other attributes, such as scheduling information (e.g. priority)
 */
-
 class PCB {
  public:
   // The unique process ID
