@@ -47,7 +47,6 @@ class PCB {
    *
   */
   ~PCB() {
-    //delete this;
   }
 
   /*
