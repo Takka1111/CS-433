@@ -1,16 +1,24 @@
+/*
+ * Assignment 1: priority queue of processes
+ * @file readyqueue.cpp
+ * @author Tucker Shaw and Abraham Gomez
+ * @brief ReadyQueue is a queue of PCB's that are in the READY state to be scheduled to run.
+ * It should be a priority queue such that the process with the highest priority can be selected next.
+ * @version 0.1
+*/
+
 #include <iostream>
 #include "readyqueue.h"
 
 using namespace std;
-
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient comments to your code
 
 /*
  * @brief Constructor for the ReadyQueue class.
 */
 ReadyQueue::ReadyQueue()  {
   count = 0;
+  
+  //Iterate through queue and set ptrs to NULL
   for(int i = 0; i < 200; i++) {
     maxHeap[i] = NULL;
   }
@@ -25,9 +33,9 @@ void ReadyQueue::addPCB(PCB *pcbPtr) {
   // When adding a PCB to the queue, you must change its state to READY.
   pcbPtr->setState(ProcState::READY);
     
-  maxHeap[count++] = pcbPtr;
+  maxHeap[count++] = pcbPtr; //Add the PCB ptr to the queue
     
-  bubbleUp(count - 1);
+  bubbleUp(count - 1); //Fix any heap violations
 }
 
 /*
@@ -36,15 +44,14 @@ void ReadyQueue::addPCB(PCB *pcbPtr) {
  * @return PCB*: the pointer to the PCB with the highest priority
 */
 PCB* ReadyQueue::removePCB() {
-  // When removing a PCB from the queue, you must change its state to RUNNING.
   PCB* pcbPtr = maxHeap[0];
   
-  exchange(maxHeap[0], maxHeap[count - 1]);
+  exchange(maxHeap[0], maxHeap[count - 1]); //Swap PCBs from front and end of queue
   count--;
   
-  maxHeapify(0);
+  maxHeapify(0); //Fix any heap violations
   
-  pcbPtr->setState(ProcState::RUNNING);
+  pcbPtr->setState(ProcState::RUNNING); // When removing a PCB from the queue, you must change its state to RUNNING.
   return pcbPtr;
 }
 
@@ -67,8 +74,9 @@ void ReadyQueue::displayAll() {
   }
 }
 
-//***********************************************************************************ADD COMMENTS
-
+/*
+ * @brief Swap two PCB ptrs within the queue
+*/
 void ReadyQueue::exchange(PCB*& elem1, PCB*& elem2)
 {
   PCB* temp = elem1; //Set a temp value to elem1
@@ -78,6 +86,9 @@ void ReadyQueue::exchange(PCB*& elem1, PCB*& elem2)
   elem2 = temp;
 }
 
+/*
+ * @brief Fixes any heap violations from a specified index going up the heap
+*/
 void ReadyQueue::bubbleUp(unsigned int idx) {
   unsigned int parent = (idx - 1)/2; //index to capture the parent of the heap
 
@@ -90,8 +101,10 @@ void ReadyQueue::bubbleUp(unsigned int idx) {
     }
 }
 
+/*
+ * @brief Fixes any heap violations from a specified index going down the heap 
+*/
 void ReadyQueue::maxHeapify(unsigned int idx) {
-  //Declare variables
   unsigned int l = (2*idx) + 1; //the index of the left child of i
   unsigned int r = (2*idx) + 2; //the index of the right child of i
   unsigned int largest = idx; //the index of the largest value among the values at i, l and r

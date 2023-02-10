@@ -1,10 +1,8 @@
 /*
  * Assignment 1: priority queue of processes
  * @file pcbtable.h
- * @author Tucker Shaw
+ * @author Tucker Shaw and Abraham Gomez
  * @brief This is the implementation file for the PCBTable class.
- * //You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
- * // Remember to add sufficient comments to your code
 */
 
 #include "pcbtable.h"
@@ -15,7 +13,7 @@
  * @param size: the capacity of the PCBTable
 */
 PCBTable::PCBTable(int size) {
-  this->table.resize(size);
+  this->table.resize(size); //Set the size of the vector to input size
 }
 
 /*
@@ -23,6 +21,7 @@ PCBTable::PCBTable(int size) {
  *
 */
 PCBTable::~PCBTable() {
+  //Iterate through the table and destroy all PCB objects	
   for(vector<PCB*>::iterator i = table.begin(); i != table.end(); i++) {
     delete *i;
   } 
