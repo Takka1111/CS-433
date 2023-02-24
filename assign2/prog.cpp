@@ -2,7 +2,7 @@
 /**
  * Assignment 2: Simple UNIX Shell
  * @file pcbtable.h
- * @author Abraham Gomez, Tucker Shaw (TODO: your name)
+ * @author Abraham Gomez, Tucker Shaw
  * @brief This is the main function of a simple UNIX Shell. You may add additional functions in this file for your implementation
  * @version 0.1
  */
