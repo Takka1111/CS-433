@@ -6,6 +6,7 @@
  * @version 0.1
  */
 
+//Include required libraries
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
@@ -19,13 +20,13 @@ using namespace std;
 #define MAX_LINE 80 // The maximum length command
 
 //Define global variables
-bool amp, in, out = false;
+bool amp, in, out;
 //bool pipe;
 char *file;
 
 //Prototypes
 int parse_command(char command[], char *args[]);
-void removeAmp_NewL(char *arg, char* args[], int& num_args);
+void removeAmp(char *arg, char* args[], int& num_args);
 
 /**
  * @brief The main function of a simple UNIX Shell. You may add additional functions in this file for your implementation
@@ -35,6 +36,7 @@ void removeAmp_NewL(char *arg, char* args[], int& num_args);
  */
 int main(int argc, char *argv[])
 {
+    //Declare variables
     char command[MAX_LINE];          // the command that was entered
     char *args[MAX_LINE / 2 + 1];    // parsed out command line arguments
     char prev[MAX_LINE] = "\n";      // previous command history
@@ -43,88 +45,85 @@ int main(int argc, char *argv[])
     int num_args, bang, empty, quit; // # of args, user input '!!', user input '\n', or user input 'quit'
     //int pipe_fd[2];                  // condition for pipe process
 
-    while (should_run)
+    while (should_run) //Running the Unix Shell
     {
+        //Set boolean conditions to false
         in = false; 
         out = false;
         amp = false;
         //pipe = false;
 
-        printf("osh>");
-        fflush(stdout);
-        
-        // Read the input command
-        fgets(command, MAX_LINE, stdin);
-
         num_args = 0;
 
+        printf("osh>"); //Print terminal input line
+        fflush(stdout); //Sets a buffer for the output
+        
+        fgets(command, MAX_LINE, stdin); // Read the input command
+
+        //Check for user history, no command, and exit shell
         bang = strcmp(command, "!!\n");
         empty = strncmp(prev, "\n", 1);
         quit = strcmp(command, "exit\n");
 
-        //cout << "Before copying command: " << command << " prev: " << prev << endl;
-
-        if(bang != 0)
+        if(bang != 0) //Store current command in prev
             strcpy(prev, command);
 
-        //cout << "After copying command: " << command << " prev: " << prev << endl;
-
-        if(quit == 0)
+        if(quit == 0) //User entered exit, quit the shell
             should_run = 0;
         else
         {
-            if(bang == 0 && empty != 0)
+            if(bang == 0 && empty != 0) //User wants to use prev command
             {
+                //Display previous command and parse
                 cout << prev;
                 num_args = parse_command(prev, args);
             }
-            else if(bang == 0 && empty == 0)
+            else if(bang == 0 && empty == 0) //No previous history found
             {
                 cout << "No command history found" << endl;
             }
-            else
+            else //Parse current command
             {
                 num_args = parse_command(command, args); // Parse the input command
             }
 
-            //cout << "working, num_args: " << num_args << endl;
-            if(num_args != 0)
+            if(num_args != 0) //Check if a command was entered
             {
-
-                proc = fork();
+                proc = fork(); //Create child process for current command
 
                 if(proc < 0) //Fork failed
                     cout << "Fork Failed." << endl;
                 else if(proc == 0) //Child process
                 {
-                    if(out)
+                    if(out) //Check for output redirection
                     {
+                        //Redirect file descriptor for std output
                         fd = open(file, O_CREAT | O_TRUNC | O_WRONLY);
                         dup2(fd, STDOUT_FILENO);
                         close(fd);
                     }
-                    else if(in)
+                    else if(in) //Check for input redirection
                     {
+                        //Redirect file descriptor for std input
                         fd = open(file, O_RDONLY);
                         dup2(fd, STDIN_FILENO);
                         close(fd);
                     }
                     // else if(pipe)
                     // {
-
+                    //     dup2(pipe_fd[0], STDOUT_FILENO);
+                    //     dup2(pipe_fd[1], STDIN_FILENO);
                     // }
                     
-                    execvp(args[0], args);
+                    execvp(args[0], args); //Child process executing
 
-                    cout << "Command not found" << endl;
+                    cout << "Command not found" << endl; //Invalid command was entered
   
                 }
                 else //Parent process
-                {
-                    //cout << "working in parent" << endl;
-                    
-                    if(!amp)
-                        wait(NULL);
+                {      
+                    if(!amp) //Check for concurrency
+                        wait(NULL); //Parent waits for child
                 }
             }
 
@@ -143,79 +142,66 @@ int main(int argc, char *argv[])
  */
 int parse_command(char command[], char *args[])
 {
-    int num_args = 0;
-    char *arg;
+    //Declare variables
+    int num_args = 0; //#args for the array
+    char *arg; //stores current arg being parsed from command line
 
-    //cout << "enter" << command << endl;
-
-    if(strncmp(command, "\n", 1) != 0)
+    if(strncmp(command, "\n", 1) != 0) //Check if any command was entered
     {
-        args[num_args++] = strtok(command, " \n");
+        args[num_args++] = strtok(command, " \n"); //Parse first arg from command line
 
-        removeAmp_NewL(args[num_args - 1], args, num_args);
+        removeAmp(args[num_args - 1], args, num_args); //Check for ampersand in arg
 
-        arg = strtok(NULL, " $\n");
+        arg = strtok(NULL, " $\n"); //Get next arg
 
-        //cout << "arg before while: " << arg << endl;
-
-        while(arg != NULL)
+        while(arg != NULL) //Check for more args in command line
         {
-            if(strncmp(arg, ">", 1) == 0)
+            if(strncmp(arg, ">", 1) == 0) //Check if output redirection, set condition
                 out = true;
-            else if(strncmp(arg, "<", 1) == 0)
+            else if(strncmp(arg, "<", 1) == 0) //Check if input redirection, set condition
                 in = true;
             // else if(strncmp(arg, "|", 1) == 0)
             //     pipe = true;
-            else if(in || out)
+            else if(in || out) //Set file name for redirection if true
                 file = arg;
             else
             {
-                args[num_args++] = arg;
-                removeAmp_NewL(args[num_args - 1], args, num_args);
+                args[num_args++] = arg; //Add the current arg
+                removeAmp(args[num_args - 1], args, num_args); //Check for ampersand
             }
-            
-            arg = strtok(NULL, " $\n");
+
+            arg = strtok(NULL, " $\n"); //Get next arg
         }
 
-        args[num_args++] = arg; //NULL
+        args[num_args++] = arg; //Add NULL to args list
     }
 
-    return num_args;
+    return num_args; //Return new #args
 }
 
-// TODO: Add additional functions if you need
-
-void removeAmp_NewL(char* arg, char* args[], int& num_args)
+/**
+ * @brief Remove the ampersand character from parsed args
+ *
+ * @param arg //Argument to modify
+ * @param args //Array of args
+ * @param num_args //# of args
+ * @return void function
+ */
+void removeAmp(char* arg, char* args[], int& num_args)
 {
-    int size = strlen(arg);
+    //Declare variables
+    int size = strlen(arg); //Get the size of the argument
 
-    if(arg[size - 2] == '&' || arg[size - 1] == '&')
+    if(arg[size - 2] == '&' || arg[size - 1] == '&') //Check if ampersand in argument
     {
-        amp = true;
-        if(size == 2)
-        {
-            arg[size - 2] = '\0';
-            num_args--;
-        }
-        else if(size == 1)
+        amp = true; //Set condition for concurrency
+
+        if(size == 1) //Ampersand inputted at end of command line (no args)
         {
             arg[size - 1] = '\0';
             num_args--;
         }
-        else
+        else //Ampersand inputted with args
             arg[size - 1] = '\0';
-        
-        cout << "Removing amp and newline" << endl;
-        cout << "arg: " << arg << endl;
-        cout << "args[0]: " << args[0] << endl;
-        cout << "args[1]" << args[1] << endl;
     } 
-    
-    if(arg[size - 1] == '\n')
-    {
-        cout << "arg before removing newline: " << arg << endl;
-        arg[size - 1]  = '\0';
-        cout << "Removing new line" << endl;
-        cout << "arg: " << arg << endl;
-    }
 }

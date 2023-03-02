@@ -4,3 +4,6 @@
 *~
 *.swp
 *.swo
+#ignore .txt and .pdf
+*.txt
+*.pdf
