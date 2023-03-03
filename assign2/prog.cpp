@@ -56,6 +56,9 @@ int main(int argc, char *argv[])
         // Set #args
         num_args = 0;
 
+        //Set redirection file
+        file = NULL;
+
         printf("osh>"); // Print terminal input line
         fflush(stdout); // Sets a buffer for the output
         
@@ -131,7 +134,7 @@ int parse_command(char command[], char *args[], char* argsP[])
                 in = true;
             else if(strncmp(arg, "|", 1) == 0) // Check if piping, set flag
                 pip = true;
-            else if(in || out) // Set file name for redirection if true
+            else if(file == NULL && (in || out)) // Set file name for redirection if true
                 file = arg;
             else if(pip > 0)
                 args[pip] = arg;
