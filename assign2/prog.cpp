@@ -19,15 +19,24 @@ using namespace std;
 
 #define MAX_LINE 80 // The maximum length command
 
-// Define global variables
-bool in, out, pip, amp;     // Flags for I/O redirection, piping, and concurrency
-char *file;                 // Captures I/O redirection file_name
+/**
+ * @brief Flags struct for condtions within commands
+ * @brief Allows for I/O redirection, piping, concurrency
+ */
+struct
+{
+    bool input_F, output_F, pipe_F, ampersand_F;
+    int should_run;
+    char* file_name;
+} Flags;
 
 // Prototypes
+void exec(char command[], char prev[], char *args[]);
 int parse_command(char command[], char *args[], char* argsP[]);
 void removeAmp(char *arg, char* args[], int& num_args);
 void execFork(char* args[]);
 void execForkPipe(char* args[], char* argsP[]);
+void setFlags();
 
 /**
  * @brief The main function of a simple UNIX Shell. You may add additional functions in this file for your implementation
@@ -38,70 +47,75 @@ void execForkPipe(char* args[], char* argsP[]);
 int main(int argc, char *argv[])
 {
     //Declare variables
-    char command[MAX_LINE];          // the command that was entered
-    char *args[MAX_LINE / 2 + 1];    // parsed out command line arguments
-    char *argsP[MAX_LINE / 2 + 1];   // parsed out command line arguments for RHS pipe
-    char prev[MAX_LINE] = "\n";      // previous command history
-    int should_run = 1;              // flag to determine when to exit program
-    int num_args, bang, empty, quit; // # of args, user input '!!', user input '\n', or user input 'quit'
+    char command[MAX_LINE];             // the command that was entered
+    char *args[MAX_LINE / 2 + 1];       // parsed out command line arguments
+    char prev[MAX_LINE] = "\n";         // previous command history
+    Flags.should_run = 1;               // flag to determine when to exit program
 
-    while (should_run) // Running the Unix Shell
+    while (Flags.should_run) // Running the Unix Shell
     {
-        // Set flags to false
-        in = false; 
-        out = false;
-        pip = false;
-        amp = false;
-        
-        // Set #args
-        num_args = 0;
-
-        //Set redirection file
-        file = NULL;
+        setFlags(); // Set flag conditions
 
         printf("osh>"); // Print terminal input line
         fflush(stdout); // Sets a buffer for the output
         
         fgets(command, MAX_LINE, stdin); // Read the input command
 
-        // Check for user history, no command, and exit shell
-        bang = strcmp(command, "!!\n");
-        empty = strncmp(prev, "\n", 1);
-        quit = strcmp(command, "exit\n");
+        exec(command, prev, args); // Execute main shell functions
+    }
 
-        if(bang != 0) // Store current command in prev
-            strcpy(prev, command);
+    return 0;
+}
 
-        if(quit == 0) // User entered exit, quit the shell
-            should_run = 0;
-        else
+/**
+ * @brief The main function of a simple UNIX Shell. You may add additional functions in this file for your implementation
+ * @param command Command entered by user on command line
+ * @param prev    Previous command entered by user
+ * @param args    Parsed out command line arguments
+ * @return VOID
+ */
+void exec(char command[], char prev[], char *args[])
+{
+    // Declare variables
+    int num_args = 0;               // # of args for command execution
+    char *argsP[MAX_LINE / 2 + 1];  // parsed out command line arguments for RHS pipe
+
+    // Check for user history command '!!', no command, and 'exit' command
+    int history = strcmp(command, "!!\n");
+    int empty = strncmp(prev, "\n", 1);
+    int quit = strcmp(command, "exit\n");
+
+    if(history != 0) // Store current command in prev
+        strcpy(prev, command);
+
+    if(quit == 0) // User entered exit, quit the shell
+        Flags.should_run = 0;
+    else
+    {
+        if(history == 0 && empty != 0) // User wants to use prev command
         {
-            if(bang == 0 && empty != 0) // User wants to use prev command
-            {
-                // Display previous command and parse
-                cout << prev;
-                num_args = parse_command(prev, args, argsP);
-            }
-            else if(bang == 0 && empty == 0) // No previous history found
-            {
-                cout << "No command history found" << endl;
-            }
-            else // Parse current command
-            {
-                num_args = parse_command(command, args, argsP); // Parse the input command
-            }
+            // Display previous command and parse
+            cout << prev;
+            num_args = parse_command(prev, args, argsP);
+        }
+        else if(history == 0 && empty == 0) // No previous history found
+        {
+            cout << "No command history found" << endl;
+        }
+        else // Parse current command
+        {
+            num_args = parse_command(command, args, argsP); // Parse the input command
+        }
 
-            if(num_args != 0) // Check if a command was entered
-            {
-                
-                if(pip) // If user piping, start the pipe process
-                    execForkPipe(args, argsP);
-                else // Run regular command
-                    execFork(args);
-            }
+        if(num_args != 0) // Check if a command was entered
+        {
+            
+            if(Flags.pipe_F) // If user piping, start the pipe process
+                execForkPipe(args, argsP);
+            else // Run regular command
+                execFork(args);
         }
     }
-    return 0;
 }
 
 /**
@@ -111,7 +125,7 @@ int main(int argc, char *argv[])
  * @param args
  * @return int
  */
-int parse_command(char command[], char *args[], char* argsP[])
+int parse_command(char command[], char *args[], char *argsP[])
 {
     // Declare variables
     int num_args = 0;       // #args for the array
@@ -126,39 +140,32 @@ int parse_command(char command[], char *args[], char* argsP[])
 
         arg = strtok(NULL, " $\n"); // Get next arg
 
-        while(arg != NULL && !pip) // Check for more args in command line
+        while(arg != NULL) // Check for more args in command line
         {
             if(strncmp(arg, ">", 1) == 0) // Check if output redirection, set flag
-                out = true;
+                Flags.output_F = true;
             else if(strncmp(arg, "<", 1) == 0) // Check if input redirection, set flag
-                in = true;
+                Flags.input_F = true;
             else if(strncmp(arg, "|", 1) == 0) // Check if piping, set flag
-                pip = true;
-            else if(file == NULL && (in || out)) // Set file name for redirection if true
-                file = arg;
-            else if(pip > 0)
-                args[pip] = arg;
+                Flags.pipe_F = true;
+            else if(Flags.file_name == NULL && (Flags.input_F || Flags.output_F)) // Set file name for redirection
+                Flags.file_name = arg;
+            else if(Flags.pipe_F) // Check if LHS gathered
+            {
+                argsP[num_argsP++] = arg; // Add argument to RHS args
+                removeAmp(argsP[num_argsP - 1], argsP, num_argsP); // Check for concurrency
+            }
             else
             {
                 args[num_args++] = arg; // Add the current arg
-                removeAmp(args[num_args - 1], args, num_args); // Check for ampersand
+                removeAmp(args[num_args - 1], args, num_args); // Check for concurrency
             }
 
             arg = strtok(NULL, " $\n"); // Get next arg
         }
 
-        if(pip) // Check piping flag
-        {
-            argsP[num_argsP++] = arg; // Add argument to RHS args
-
-            while(arg != NULL) // Check for more args after pipe and add
-            {
-                arg = strtok(NULL, " $\n"); 
-                argsP[num_argsP++] = arg; 
-            }
-        }
-
         args[num_args++] = arg; // Add NULL to args list
+        argsP[num_argsP++] = arg; // Add NULL to RHS args list for pipe
     }
 
     return num_args; // Return new #args
@@ -172,14 +179,14 @@ int parse_command(char command[], char *args[], char* argsP[])
  * @param num_args //# of args
  * @return VOID
  */
-void removeAmp(char* arg, char* args[], int& num_args)
+void removeAmp(char *arg, char *args[], int& num_args)
 {
     // Declare variables
     int size = strlen(arg);     // Get the size of the argument
 
     if(arg[size - 2] == '&' || arg[size - 1] == '&') // Check if ampersand in argument
     {
-        amp = true; // Set flag for concurrency
+        Flags.ampersand_F = true; // Set flag for concurrency
 
         if(size == 1) // Ampersand inputted at end of command line (no args)
         {
@@ -197,7 +204,7 @@ void removeAmp(char* arg, char* args[], int& num_args)
  * @param args //Array of args
  * @return void function
  */
-void execFork(char* args[])
+void execFork(char *args[])
 {
     // Declare variables
     int fd;             // condition for I/O redirection
@@ -209,17 +216,17 @@ void execFork(char* args[])
         cout << "Fork Failed." << endl;
     else if(pid == 0) // Child process executes
     {
-        if(out) // Check for output redirection
+        if(Flags.output_F) // Check for output redirection
         {
             // Redirect file descriptor for std output
-            fd = open(file, O_CREAT | O_TRUNC | O_WRONLY);
+            fd = open(Flags.file_name, O_CREAT | O_TRUNC | O_WRONLY);
             dup2(fd, STDOUT_FILENO);
             close(fd);
         }
-        else if(in) // Check for input redirection
+        else if(Flags.input_F) // Check for input redirection
         {
             // Redirect file descriptor for std input
-            fd = open(file, O_RDONLY);
+            fd = open(Flags.file_name, O_RDONLY);
             dup2(fd, STDIN_FILENO);
             close(fd);
         }
@@ -229,7 +236,7 @@ void execFork(char* args[])
     }
     else // Parent process executes
     {
-        if(!amp) // Check for concurrency
+        if(!Flags.ampersand_F) // Check for concurrency
             wait(NULL); // Parent waits for child
     }
 }
@@ -241,11 +248,12 @@ void execFork(char* args[])
  * @param argsP // Array of args for RHS of pipe
  * @return VOID
  */
-void execForkPipe(char* args[], char* argsP[])
+void execForkPipe(char *args[], char *argsP[])
 {
     // Declare variables
     int pid;         // condition for forks
-    int pipe_fd[2];  // condition for pipe process file descriptors
+    int fd;          // file descriptor for I/O redirection
+    int pipe_fd[2];  // pipe process file descriptors
 
     if(pipe(pipe_fd) < 0) //Create the pipe and check for failure
         cout << "Pipe Failed" << endl;
@@ -272,6 +280,21 @@ void execForkPipe(char* args[], char* argsP[])
                 cout << "Fork Failed" << endl;
             else if(pid == 0) // Child process executes
             {
+                if(Flags.output_F) // Check for output redirection
+                {
+                    // Redirect file descriptor for std output
+                    fd = open(Flags.file_name, O_CREAT | O_TRUNC | O_WRONLY);
+                    dup2(fd, STDOUT_FILENO);
+                    close(fd);
+                }
+                else if(Flags.input_F) // Check for input redirection
+                {
+                    // Redirect file descriptor for std input
+                    fd = open(Flags.file_name, O_RDONLY);
+                    dup2(fd, STDIN_FILENO);
+                    close(fd);
+                }
+
                 dup2(pipe_fd[0], STDIN_FILENO); // Set pipe condition for reading input
                 close(pipe_fd[1]); // Close pipe fd for reading
                 close(pipe_fd[0]); // Close pipe fd for writing
@@ -284,8 +307,22 @@ void execForkPipe(char* args[], char* argsP[])
                 close(pipe_fd[0]); // Close parent pipe fd for read
                 close(pipe_fd[1]); // Close parent pipe fd for write
 
-                wait(NULL); // Parent process waits
+                if(!Flags.ampersand_F)
+                    wait(NULL); // Parent process waits
             }
         }
     }
+}
+
+/**
+ * @brief Resets Flags struct conditions
+ * @return VOID
+ */
+void setFlags()
+{
+    Flags.input_F = false;
+    Flags.output_F = false;
+    Flags.pipe_F = false;
+    Flags.ampersand_F = false;
+    Flags.file_name = NULL;
 }
