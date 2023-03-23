@@ -1,7 +1,7 @@
 /**
 * Assignment 3: CPU Scheduler
  * @file scheduler.h
- * @author ??? (TODO: your name)
+ * @author Tucker Shaw and Abraham Gomez
  * @brief This is the header file for the base Scheduler class. Specific schedulers, e.g. FCFS, SJF and RR, inherit
  *        this base class.
  * @version 0.1
@@ -23,10 +23,12 @@ public:
      * @brief Construct a new Scheduler object
      */
     Scheduler() {}
+    
     /**
      * @brief Destroy the Scheduler object
      */
     virtual ~Scheduler() {}
+    
     /**
      * @brief This function is called once before the simulation starts.
      *        It is used to initialize the scheduler.
@@ -39,7 +41,6 @@ public:
      *        It is used to print out the results of the simulation.
      */
     virtual void print_results() = 0;
-
 
     /**
      * @brief This function simulates the scheduling of processes in the ready queue.

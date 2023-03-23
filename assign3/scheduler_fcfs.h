@@ -1,7 +1,7 @@
 /**
 * Assignment 3: CPU Scheduler
  * @file scheduler_fcfs.h
- * @author ??? (TODO: your name)
+ * @author Tucker Shaw and Abraham Gomez
  * @brief This Scheduler class implements the FCSF scheduling algorithm.
  * @version 0.1
  */
@@ -24,6 +24,7 @@ public:
      * @brief Construct a new SchedulerFCFS object
      */
     SchedulerFCFS();
+    
     /**
      * @brief Destroy the SchedulerFCFS object
      */
@@ -48,4 +49,5 @@ public:
      */
     void simulate() override;
 };
+
 #endif //ASSIGN3_SCHEDULER_FCFS_H

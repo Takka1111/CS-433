@@ -1,7 +1,7 @@
 /**
 * Assignment 3: CPU Scheduler
  * @file scheduler_priority.h
- * @author ??? (TODO: your name)
+ * @author Tucker Shaw and Abraham Gomez
  * @brief This Scheduler class implements the Priority scheduling algorithm.
  * @version 0.1
  */
@@ -47,8 +47,6 @@ public:
      *        It stops when all processes are finished.
      */
     void simulate() override;
-
 };
-
 
 #endif //ASSIGN3_SCHEDULER_PRIORITY_H

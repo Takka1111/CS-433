@@ -1,7 +1,7 @@
 /**
  * Assignment 1: priority queue of processes
  * @file pcb.h
- * @author ??? (TODO: your name)
+ * @author Tucker Shaw and Abraham Gomez
  * @brief This is the header file for the PCB class, a process control block.
  * @version 0.1
  */
@@ -24,16 +24,11 @@ using namespace std;
  */
 class PCB {
 public:
-    // Name of the process
-    string name;
-    // The unique process ID
-    unsigned int id;
-    // The priority of a process. Larger number represents higher priority
-    unsigned int priority;
-    // The CPU burst time of the process
-    unsigned int burst_time;
-    // The arrival time of the process
-    unsigned int arrival_time;
+    string name;                // Name of the process
+    unsigned int id;            // The unique process ID
+    unsigned int priority;      // The priority of a process. Larger number represents higher priority
+    unsigned int burst_time;    // The CPU burst time of the process
+    unsigned int arrival_time;  // The arrival time of the process
 
     /**
      * @brief Construct a new PCB object
