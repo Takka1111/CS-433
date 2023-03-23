@@ -5,17 +5,32 @@
  * @brief This Scheduler class implements the SJF scheduling algorithm.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
 
 #ifndef ASSIGN3_SCHEDULER_SJF_H
 #define ASSIGN3_SCHEDULER_SJF_H
 
 #include "scheduler.h"
+#include <string>       // std::string
+#include <queue>        // std::queue
+
+// Define global variables and structures
+const int SIZE = 8; // # of processes possible
+
+/**
+ * @brief Struct stores results for process turnaround and waiting times
+ * 
+ */
+struct ProcTime {
+    string name = "";   // Name of the process
+    int turnaround = 0; // Turnaround time of process
+    int waiting = 0;    // Waiting time of process
+};
 
 class SchedulerSJF : public Scheduler {
 private:
-    // TODO: add necessary member variables here for your implementation
+    queue<PCB>* ready_queue;    // Pointer to ready queue for processes
+    ProcTime results[SIZE];       // Array of ProcTime structs for printing results of algorithm
+    int count;                  // Counter for results array
 
 public:
     /**
