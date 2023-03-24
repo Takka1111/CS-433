@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Create a scheduler object
-    SchedulerRR scheduler (time_quantum);
+    SchedulerRR scheduler(time_quantum);
     
     // Run the scheduler
     scheduler.init(process_list);

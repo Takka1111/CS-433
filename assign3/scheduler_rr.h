@@ -5,17 +5,34 @@
  * @brief This Scheduler class implements the RoundRobin (RR) scheduling algorithm.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
 
 #ifndef ASSIGN3_SCHEDULER_RR_H
 #define ASSIGN3_SCHEDULER_RR_H
 
 #include "scheduler.h"
+#include <string>       //std::string
+#include <queue>        // std::queue
+
+// Define global variables and structures
+const int SIZE = 8; // # of processes possible
+
+/**
+ * @brief Struct stores results for process turnaround and waiting times
+ *        It also stores the burst time changes as the time quantum is executed
+ */
+struct ProcTime {
+    string name = "";   // Name of the process
+    unsigned int burst; // Burst time of process
+    int turnaround = 0; // Turnaround time of process
+    int waiting = 0;    // Waiting time of process
+};
 
 class SchedulerRR : public Scheduler {
 private:
-    // TODO: add necessary member variables here for your implementation
+    queue<PCB>* ready_queue;    // Pointer to ready queue for processes
+    unsigned int tquantum;      // For storing time quantum
+    ProcTime results[SIZE];     // Array of ProcTime structs for printing results of algorithm
+    int count;                  // Counter for results array
 
 public:
     /**
