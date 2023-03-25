@@ -67,7 +67,7 @@ void SchedulerRR::print_results() {
 void SchedulerRR::simulate() {
     int total_time = 0; // For calculating turnaround and waiting times
 
-    // Simulate SJF scheduler until no more processes left
+    // Simulate RR scheduler until no more processes left
     while(!this->ready_queue->empty()) {
         std::cout << "Running Process " << this->ready_queue->front().name; //Print proc name
 
