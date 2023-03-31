@@ -14,13 +14,13 @@
 #include <queue>        // std::queue
 
 // Define global variables and structures
-const int SIZE = 8; // # of processes possible
+const int SIZE = 100; // # of processes possible
 
 /**
  * @brief Struct stores results for process turnaround and waiting times
  * 
  */
-struct ProcTime {
+struct ProcTime_S {
     string name = "";   // Name of the process
     int turnaround = 0; // Turnaround time of process
     int waiting = 0;    // Waiting time of process
@@ -28,8 +28,8 @@ struct ProcTime {
 
 class SchedulerSJF : public Scheduler {
 private:
-    queue<PCB>* ready_queue;    // Pointer to ready queue for processes
-    ProcTime results[SIZE];       // Array of ProcTime structs for printing results of algorithm
+    queue<PCB> ready_queue;     // Ready queue for processes
+    ProcTime_S results[SIZE];   // Array of ProcTime structs for printing results of algorithm
     int count;                  // Counter for results array
 
 public:

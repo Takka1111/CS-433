@@ -5,8 +5,6 @@
  * @brief This Scheduler class implements the FCSF scheduling algorithm.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
 
 #include "scheduler_fcfs.h"
 
@@ -14,29 +12,25 @@
 * @brief Construct a new SchedulerFCFS object
 */
 SchedulerFCFS::SchedulerFCFS() {
-    this->ready_queue = new std::queue<PCB>;    // Create a new ready queue
-    this->count = 0;                            // Set counter for results array
+    this->count = 0; // Set counter for results array
 }
 
 /**
  * @brief Destroy the SchedulerFCFS object
  */
-SchedulerFCFS::~SchedulerFCFS() {
-    delete this->ready_queue; // Destroy the ready queue
-}
+SchedulerFCFS::~SchedulerFCFS() {}
 
 /**
  * @brief This function is called once before the simulation starts.
  *        It is used to initialize the scheduler.
+ * @param process_list The list of processes in the simulation.
  */
 void SchedulerFCFS::init(std::vector<PCB>& process_list) {
-    // Iterate through unsorted process_list and add into results array
-    for(std::vector<PCB>::iterator i = process_list.begin(); i != process_list.end(); i++)
+    // Iterate through proc list and add to results array and ready queue
+    for(std::vector<PCB>::iterator i = process_list.begin(); i != process_list.end(); i++) {
         this->results[this->count++].name = i->name; // Add the proc into result array
-
-    // Iterate through proc list and fill ready queue
-    for(std::vector<PCB>::iterator i = process_list.begin(); i != process_list.end(); i++)
-        this->ready_queue->push(*i); //Push in proc
+        this->ready_queue.push(*i); //Push in proc
+    }
 }
 
 /**
@@ -44,10 +38,10 @@ void SchedulerFCFS::init(std::vector<PCB>& process_list) {
  *        It is used to print out the results of the simulation.
  */
 void SchedulerFCFS::print_results() {
-    double avg_turnaround, avg_waiting = 0; // For calculating averages
+    double avg_turnaround = 0, avg_waiting = 0; // For calculating averages
     
     // Loop through result array and print results
-    for(int i = 0; i < count; i++) {
+    for(int i = 0; i < this->count; i++) {
         std::cout << this->results[i].name << " turn-around time = " << this->results[i].turnaround
                   << ", waiting time = " << this->results[i].waiting << std::endl; // Print results
         
@@ -57,8 +51,8 @@ void SchedulerFCFS::print_results() {
     }
 
     // Print average turnaround and waiting times
-    std::cout << "Average turn-around time = " << avg_turnaround / 8
-              << ", Average waiting time = " << avg_waiting / 8 << std::endl;
+    std::cout << "Average turn-around time = " << avg_turnaround / this->count
+              << ", Average waiting time = " << avg_waiting / this->count << std::endl;
 }
 
 /**
@@ -68,17 +62,17 @@ void SchedulerFCFS::print_results() {
 void SchedulerFCFS::simulate() {
     int total_time = 0; // For calculating turnaround and waiting times
 
-    // Simulate SJF scheduler until no more processes left
-    while(!this->ready_queue->empty()) {
-        std::cout << "Running Process " << this->ready_queue->front().name 
-            << " for " << this->ready_queue->front().burst_time << " time units" << std::endl; // Print running message
+    // Simulate FCFS scheduler until no more processes left
+    while(!this->ready_queue.empty()) {
+        std::cout << "Running Process " << this->ready_queue.front().name 
+            << " for " << this->ready_queue.front().burst_time << " time units" << std::endl; // Print running message
         
-        this->results[this->ready_queue->front().id].waiting = total_time; // Get waiting time for current proc
+        this->results[this->ready_queue.front().id].waiting = total_time; // Waiting time is just total time
 
-        total_time += this->ready_queue->front().burst_time; // Update total time
+        total_time += this->ready_queue.front().burst_time; // Update total time with burst time of current proc
 
-        this->results[this->ready_queue->front().id].turnaround = total_time; // Get turnaround time for current proc
+        this->results[this->ready_queue.front().id].turnaround = total_time; // Turnaround time is just current time
 
-        this->ready_queue->pop(); // Remove the process from the ready queue
+        this->ready_queue.pop(); // Remove the process from the ready queue
     }
 }

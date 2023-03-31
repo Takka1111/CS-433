@@ -5,8 +5,6 @@
  * @brief This Scheduler class implements the FCSF scheduling algorithm.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
 
 #ifndef ASSIGN3_SCHEDULER_FCFS_H
 #define ASSIGN3_SCHEDULER_FCFS_H
@@ -16,13 +14,13 @@
 #include <queue>        // std::queue
 
 // Define global variables and structures
-const int SIZE = 8; // # of processes possible
+const int SIZE = 100; // # of processes possible
 
 /**
  * @brief Struct stores results for process turnaround and waiting times
  * 
  */
-struct ProcTime {
+struct ProcTime_F {
     string name = "";   // Name of the process
     int turnaround = 0; // Turnaround time of process
     int waiting = 0;    // Waiting time of process
@@ -30,8 +28,8 @@ struct ProcTime {
 
 class SchedulerFCFS : public Scheduler {
 private:
-    queue<PCB>* ready_queue;    // Pointer to ready queue for processes
-    ProcTime results[SIZE];       // Array of ProcTime structs for printing results of algorithm
+    queue<PCB> ready_queue;     // Ready queue for processes
+    ProcTime_F results[SIZE];   // Array of ProcTime structs for printing results of algorithm
     int count;                  // Counter for results array
 
 public:

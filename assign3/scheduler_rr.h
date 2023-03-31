@@ -10,28 +10,28 @@
 #define ASSIGN3_SCHEDULER_RR_H
 
 #include "scheduler.h"
-#include <string>       //std::string
+#include <string>       // std::string
 #include <queue>        // std::queue
 
 // Define global variables and structures
-const int SIZE = 8; // # of processes possible
+const int SIZE = 100; // # of processes possible
 
 /**
  * @brief Struct stores results for process turnaround and waiting times
  *        It also stores the burst time changes as the time quantum is executed
  */
-struct ProcTime {
-    string name = "";   // Name of the process
-    unsigned int burst; // Burst time of process
-    int turnaround = 0; // Turnaround time of process
-    int waiting = 0;    // Waiting time of process
+struct ProcTime_R {
+    string name = "";       // Name of the process
+    unsigned int burst = 0; // Burst time of process
+    int turnaround = 0;     // Turnaround time of process
+    int waiting = 0;        // Waiting time of process
 };
 
 class SchedulerRR : public Scheduler {
 private:
-    queue<PCB>* ready_queue;    // Pointer to ready queue for processes
+    queue<PCB> ready_queue;     // Ready queue for processes
     unsigned int tquantum;      // For storing time quantum
-    ProcTime results[SIZE];     // Array of ProcTime structs for printing results of algorithm
+    ProcTime_R results[SIZE];   // Array of ProcTime structs for printing results of algorithm
     int count;                  // Counter for results array
 
 public:

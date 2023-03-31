@@ -15,8 +15,8 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     cout << "CS 433 Programming assignment 3" << endl;
-    cout << "Author: xxxxxx and xxxxxxx" << endl;     // TODO: add your name
-    cout << "Date: xx/xx/20xx" << endl;               // TODO: add date
+    cout << "Author: Tucker Shaw and Abraham Gomez" << endl;
+    cout << "Date: 03/31/2023" << endl;
     cout << "Course: CS433 (Operating Systems)" << endl;
     cout << "Description : test SJF scheduling algorithm " << endl;
     cout << "=================================" << endl;
