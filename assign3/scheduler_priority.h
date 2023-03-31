@@ -13,10 +13,26 @@
 #define ASSIGN3_SCHEDULER_PRIORITY_H
 
 #include "scheduler.h"
+#include <string>
+#include <queue>
+
+
+const int SIZE = 8;
+
+
+struct ProcTime {
+    string name = "";
+    int turnaround = 0;
+    int waiting = 0;
+    unsigned int burst;
+    unsigned int priority = 0;
+};
 
 class SchedulerPriority : public Scheduler {
 private:
-    // TODO: add necessary member variables here for your implementation
+    queue<PCB>* ready_queue;
+    ProcTime results[SIZE];
+    int count;
 
 public:
     /**

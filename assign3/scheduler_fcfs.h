@@ -12,31 +12,46 @@
 #define ASSIGN3_SCHEDULER_FCFS_H
 
 #include "scheduler.h"
+#include <string>       // std::string
+#include <queue>        // std::queue
+
+// Define global variables and structures
+const int SIZE = 8; // # of processes possible
+
 /**
- * @brief This Scheduler class implements the FCFS scheduling algorithm.
+ * @brief Struct stores results for process turnaround and waiting times
+ * 
  */
+struct ProcTime {
+    string name = "";   // Name of the process
+    int turnaround = 0; // Turnaround time of process
+    int waiting = 0;    // Waiting time of process
+};
+
 class SchedulerFCFS : public Scheduler {
 private:
-    // TODO: add necessary member variables here for your implementation
+    queue<PCB>* ready_queue;    // Pointer to ready queue for processes
+    ProcTime results[SIZE];       // Array of ProcTime structs for printing results of algorithm
+    int count;                  // Counter for results array
 
 public:
     /**
-     * @brief Construct a new SchedulerFCFS object
+     * @brief Construct a new SchedulerSJF object
      */
     SchedulerFCFS();
-    
+
     /**
-     * @brief Destroy the SchedulerFCFS object
+     * @brief Destroy the SchedulerSJF object
      */
     ~SchedulerFCFS() override;
-
+    
     /**
      * @brief This function is called once before the simulation starts.
      *        It is used to initialize the scheduler.
      * @param process_list The list of processes in the simulation.
      */
     void init(std::vector<PCB>& process_list) override;
-
+    
     /**
      * @brief This function is called once after the simulation ends.
      *        It is used to print out the results of the simulation.
