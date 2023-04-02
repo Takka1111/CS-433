@@ -19,11 +19,6 @@ SchedulerPriority::SchedulerPriority(){
 }
 
 /**
- * @brief Destroy the SchedulerPriority Object
-*/
-SchedulerPriority::~SchedulerPriority(){}
-
-/**
  * @brief This function is called once before the simulation starts.
  *        It is used to initialize the scheduler.
  * @param process_list The list of processes in the simulation.

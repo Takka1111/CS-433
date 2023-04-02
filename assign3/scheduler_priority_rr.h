@@ -44,7 +44,7 @@ public:
     /**
      * @brief Destroy the SchedulerPriority object
      */
-    ~SchedulerPriorityRR() override;
+    ~SchedulerPriorityRR() override {} // Declaring empty destructor (nothing in memory to destroy)
 
     /**
      * @brief This function is called once before the simulation starts.

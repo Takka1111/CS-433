@@ -16,11 +16,6 @@ SchedulerFCFS::SchedulerFCFS() {
 }
 
 /**
- * @brief Destroy the SchedulerFCFS object
- */
-SchedulerFCFS::~SchedulerFCFS() {}
-
-/**
  * @brief This function is called once before the simulation starts.
  *        It is used to initialize the scheduler.
  * @param process_list The list of processes in the simulation.
