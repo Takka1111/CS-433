@@ -8,7 +8,7 @@
 
 #ifndef ASSIGN4_BUFFER_H
 #define ASSIGN4_BUFFER_H
-
+#include <queue>
 // Define the data type of the buffer items
 typedef int buffer_item;
 
@@ -20,7 +20,7 @@ private:
     // TODO: Add your implementation of the buffer class here
     std::queue<buffer_item> items
     int count;
-    unsigned int maxS;
+    int maxS;
 
 public:
     /**
