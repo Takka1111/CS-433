@@ -18,6 +18,9 @@ typedef int buffer_item;
 class Buffer {
 private:
     // TODO: Add your implementation of the buffer class here
+    std::queue<buffer_item> items
+    int count;
+    unsigned int maxS;
 
 public:
     /**
