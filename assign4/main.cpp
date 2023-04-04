@@ -1,7 +1,7 @@
 /**
 * Assignment 4: Producer Consumer Problem
  * @file main.cpp
- * @author ??? (TODO: your name)
+ * @author Abraham Gomez and Tucker Shaw (TODO: your name)
  * @brief The main program for the producer consumer problem.
  * @version 0.1
  */
