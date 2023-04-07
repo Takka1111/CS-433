@@ -19,7 +19,7 @@ typedef int buffer_item;
 class Buffer {
 private:
     int maxSize;
-    std::queue<buffer_item> items
+    std::queue<buffer_item> items;
     int count;
 
 
