@@ -1,12 +1,11 @@
 /**
 * Assignment 4: Producer Consumer Problem
  * @file main.cpp
- * @author Abraham Gomez and Tucker Shaw (TODO: your name)
+ * @author Abraham Gomez and Tucker Shaw
  * @brief The main program for the producer consumer problem.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
+
 #include <iostream>
 #include "buffer.h"
 #include <unistd.h>
@@ -19,6 +18,7 @@ Buffer buffer;
 // Producer thread function
 // TODO: Add your implementation of the producer thread here
 void *producer(void *param) {
+
     // Each producer insert its own ID into the buffer
     // For example, thread 1 will insert 1, thread 2 will insert 2, and so on.
     buffer_item item = *((int *) param);
@@ -39,7 +39,7 @@ void *producer(void *param) {
 // Consumer thread function
 // TODO: Add your implementation of the consumer thread here
 void *consumer(void *param) {
-    buffer_item item;
+    buffer_item item; // Create a buffer item container
 
     while (true) {
         /* sleep for a random period of time */

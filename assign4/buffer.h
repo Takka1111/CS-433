@@ -9,20 +9,39 @@
 #ifndef ASSIGN4_BUFFER_H
 #define ASSIGN4_BUFFER_H
 
-// Define the data type of the buffer items
-typedef int buffer_item;
-#include <queue>
+#include <queue>        // For std::queue
+#include <pthread.h>    // For mutex locks and condition variables
+
+typedef int buffer_item; // The data type of the buffer items
+
+/**
+ * @brief Struct stores the semaphores for the producer-consumer threads
+ * Contains:
+    * A mutex lock
+    * A condition variable for the buffer being full
+    * A condition variable for the buffer being empty
+ */
+struct Lock {
+    pthread_mutex_t mutex;  // The mutex lock
+    pthread_cond_t full;    // Condition for full buffer
+    pthread_cond_t empty;   // Condition for empty buffer
+};
 
 /**
  * @brief The bounded buffer class. The number of items in the buffer cannot exceed the size of the buffer.
+ * This class contains:
+    * A queue object for the buffer
+    * The maximum capacity of the buffer
+    * The current number of items in the buffer
+    * A lock struct to hold the mutex, empty, and full semaphores
  */
 class Buffer {
 private:
-    int maxSize;
-    std::queue<buffer_item> items;
-    int count;
-
-
+    std::queue<buffer_item> buffer; // Buffer queue
+    int capacity;                   // Maximum capacity
+    int count;                      // Current number of items in buffer
+    Lock lock;                      // Semaphore struct
+    bool noError;                   // Flag for error conditions in producer/consumer
 public:
     /**
      * @brief Construct a new Buffer object
@@ -33,7 +52,7 @@ public:
     /**
      * @brief Destroy the Buffer object
      */
-    ~Buffer();
+    ~Buffer() {}
 
     /**
      * @brief Insert an item into the buffer
@@ -55,24 +74,25 @@ public:
      * @brief Get the size of the buffer
      * @return the size of the buffer
      */
-    int get_size();
+    int get_size() { return this->capacity; } 
 
     /**
      * @brief Get the number of items in the buffer
      * @return the number of items in the buffer
      */
-    int get_count();
+    int get_count() { return this->count; }
 
     /**
      * @brief Chceck if the buffer is empty
      * @return true if the buffer is empty, else false
      */
-    bool is_empty();
+    bool is_empty() { return (count == 0) ? true:false; }
+
     /**
      * @brief Check if the buffer is full
      * @return true if the buffer is full, else false
      */
-    bool is_full();
+    bool is_full() { return (count == capacity) ? true:false; }
 
     /**
      * @brief Print the buffer
