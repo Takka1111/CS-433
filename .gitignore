@@ -1,5 +1,6 @@
 #ignore makefiles
 *.o
+prog4
 fcfs
 sjf
 priority
