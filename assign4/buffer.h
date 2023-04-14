@@ -6,26 +6,12 @@
  * @version 0.1
  */
 
-#ifndef ASSIGN4_BUFFER_H
-#define ASSIGN4_BUFFER_H
+#ifndef BUFFER_H
+#define BUFFER_H
 
-#include <queue>        // For std::queue
-#include <pthread.h>    // For mutex locks and condition variables
+#include <queue> // For std::queue
 
 typedef int buffer_item; // The data type of the buffer items
-
-/**
- * @brief Struct stores the semaphores for the producer-consumer threads
- * Contains:
-    * A mutex lock
-    * A condition variable for the buffer being full
-    * A condition variable for the buffer being empty
- */
-struct Lock {
-    pthread_mutex_t mutex;  // The mutex lock
-    pthread_cond_t full;    // Condition for full buffer
-    pthread_cond_t empty;   // Condition for empty buffer
-};
 
 /**
  * @brief The bounded buffer class. The number of items in the buffer cannot exceed the size of the buffer.
@@ -33,14 +19,13 @@ struct Lock {
     * A queue object for the buffer
     * The maximum capacity of the buffer
     * The current number of items in the buffer
-    * A lock struct to hold the mutex, empty, and full semaphores
+    * A flag for error conditions
  */
 class Buffer {
 private:
     std::queue<buffer_item> buffer; // Buffer queue
     int capacity;                   // Maximum capacity
     int count;                      // Current number of items in buffer
-    Lock lock;                      // Semaphore struct
     bool noError;                   // Flag for error conditions in producer/consumer
 public:
     /**
@@ -99,4 +84,5 @@ public:
      */
     void print_buffer();
 };
+
 #endif //ASSIGN4_BUFFER_H
