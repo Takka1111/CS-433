@@ -15,8 +15,26 @@
  */
 Buffer::Buffer(int size)
 {
-    this->capacity = size;
-    this->count = 0;   
+    this->capacity = size;  // Set the capacity of the buffer
+    this->count = 0;        // Initialize the number of items in the buffer
+    
+    // Initialize the mutex lock
+    if(pthread_mutex_init(&lock.mutex, NULL) != 0) {
+        perror("pthread_mutex_init");
+        exit(1);
+    }  
+
+    // Initialize the full condition variable
+    if(pthread_cond_init(&lock.full, NULL) != 0) {
+        perror("pthread_cond_init");
+        exit(1);    
+    }
+
+    // Initialize the empty condition variable
+    if(pthread_cond_init(&lock.empty, NULL) != 0) {
+        perror("pthread_cond_init");
+        exit(1);    
+    } 
 }
 
 /**
@@ -30,7 +48,7 @@ bool Buffer::insert_item(buffer_item item)
     pthread_mutex_lock(&lock.mutex); // Acquire the mutex lock
 
     while(is_full())  // Check if buffer is full
-        pthread_cond_wait(&lock.full, &lock.mutex); // Producer sleeps and waits for signal
+        pthread_cond_wait(&lock.empty, &lock.mutex); // Producer sleeps and waits for signal
     
     this->buffer.push(item); // Add the item to the buffer
     this->count++;           // Increment the number of items in the buffer
@@ -41,7 +59,7 @@ bool Buffer::insert_item(buffer_item item)
     else
         this->noError = false;
 
-    pthread_cond_signal(&lock.empty);   // Signal the empty condition variable for consumer threads
+    pthread_cond_signal(&lock.full);    // Signal the full condition variable for consumer threads
     pthread_mutex_unlock(&lock.mutex);  // Release the mutex lock
 
     return this->noError;   // Return the flag for error condtions
@@ -58,9 +76,9 @@ bool Buffer::remove_item(buffer_item *item)
     pthread_mutex_lock(&lock.mutex); // Acquire the mutex lock
 
     while(is_empty())  // Check if queue is empty
-        pthread_cond_wait(&lock.empty, &lock.mutex); // Producer sleeps and waits for signal
+        pthread_cond_wait(&lock.full, &lock.mutex); // Producer sleeps and waits for signal
     
-    item = &(this->buffer.front());    // Capture the front item
+    *item = this->buffer.front();   // Capture the front item
     this->buffer.pop();             // Remove the item from the buffer
     this->count--;                  // Decrement the number of items in the buffer
 
@@ -70,7 +88,7 @@ bool Buffer::remove_item(buffer_item *item)
     else
         this->noError = false;
 
-    pthread_cond_signal(&lock.full);    // Signal the full condition variable for producer threads
+    pthread_cond_signal(&lock.empty);   // Signal the empty condition variable for producer threads
     pthread_mutex_unlock(&lock.mutex);  // Release the mutex lock
 
     return this->noError;   // Return the flag for error conditions

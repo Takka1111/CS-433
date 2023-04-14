@@ -7,59 +7,82 @@
  */
 
 #include <iostream>
-#include "buffer.h"
 #include <unistd.h>
+#include "buffer.h"
 
 using namespace std;
 
-// global buffer object
-Buffer buffer;
+Buffer buffer; // Global buffer object
 
-// Producer thread function
-// TODO: Add your implementation of the producer thread here
+/**
+ * @brief Producer function
+ * @param param The ID for the buffer item
+ */
 void *producer(void *param) {
+    buffer_item item = *((int *) param); // Produce an item with unique ID
 
-    // Each producer insert its own ID into the buffer
-    // For example, thread 1 will insert 1, thread 2 will insert 2, and so on.
-    buffer_item item = *((int *) param);
-
+    // Thread will continue to loop until main exits
     while (true) {
-        /* sleep for a random period of time */
-        usleep(rand()%1000000);
-        // TODO: Add synchronization code here
+        usleep(rand()%1000000); // Sleep for a random period of time
+
         if (buffer.insert_item(item)) {
             cout << "Producer " << item << ": Inserted item " << item << endl;
-            buffer.print_buffer();
+
+            buffer.print_buffer(); // Print the buffer contents
         } else {
-            cout << "Producer error condition"  << endl;    // shouldn't come here
+            cout << "Producer error condition"  << endl;    // Error (should not execute)
         }
     }
 }
 
-// Consumer thread function
-// TODO: Add your implementation of the consumer thread here
+/**
+ * @brief Consumer function
+ * @param param The ID for the buffer item
+ */
 void *consumer(void *param) {
     buffer_item item; // Create a buffer item container
 
+    // Thread will continue to loop until main exits
     while (true) {
-        /* sleep for a random period of time */
-        usleep(rand() % 1000000);
-        // TODO: Add synchronization code here
+        usleep(rand() % 1000000); // Sleep for a random period of time
+
+        // Consume an item and print result
         if (buffer.remove_item(&item)) {
-            cout << "Consumer " << item << ": Removed item " << item << endl;
-            buffer.print_buffer();
+            cout << "Consumer Removed item " << item << endl;
+
+            buffer.print_buffer(); // Print the buffer contents
         } else {
-            cout << "Consumer error condition" << endl;    // shouldn't come here
+            cout << "Consumer error condition" << endl;    // Error (should not execute)
         }
     }
 }
 
 int main(int argc, char *argv[]) {
-    /* TODO: 1. Get command line arguments argv[1],argv[2],argv[3] */
-    /* TODO: 2. Initialize buffer and synchronization primitives */
-    /* TODO: 3. Create producer thread(s).
-     * You should pass an unique int ID to each producer thread, starting from 1 to number of threads */
-    /* TODO: 4. Create consumer thread(s) */
-    /* TODO: 5. Main thread sleep */
-    /* TODO: 6. Exit */
+    // Declare variables and set arguments
+    int sleep_time = atoi(argv[1]); // Time for threads to sleep before terminating
+    int num_prods = atoi(argv[2]);  // Number of producer threads to create
+    int num_cons = atoi(argv[3]);   // Number of consumer threads to create
+    pthread_t producers[num_prods]; // Initialize producer thread array
+    pthread_t consumers[num_cons];  // Initialize consumer thread array
+    //int id;                         // Container for producer's ID
+
+    // Check if more or less arguments were specified for execution
+    if (argc != 4) {
+        cout << "Expected 3 arguments, received: " << argc - 1 << endl;
+
+        return 1; // Exit the program
+    }
+
+    // Create producer thread(s).
+    // Each thread has unique int ID to each producer thread, starting from 1 to number of threads
+    for(int i = 0; i < num_prods; i++)
+        pthread_create(&producers[i], NULL, &producer, (void *) &(i)); // Each producer thread will run the producer function
+    
+    //Create consumer thread(s)
+    for(int i = 0; i < num_cons; i++) 
+        pthread_create(&consumers[i], NULL, &consumer, NULL); // Each consumer thread will run the consumer function
+
+    sleep(sleep_time); // Main thread sleep for specified amount of time
+
+    return 0; // Exit the program
 }
