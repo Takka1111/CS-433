@@ -16,7 +16,6 @@
 Buffer::Buffer(int size)
 {
     this->capacity = size;  // Set the capacity of the buffer
-    this->count = 0;        // Initialize the number of items in the buffer
     this->noError = false;  // Initialize the error condition flag
 }
 
@@ -31,7 +30,6 @@ bool Buffer::insert_item(buffer_item item)
     // Check if the buffer is full  
     if(!is_full()) {
         this->buffer.push(item); // Add the item to the buffer
-        this->count++;           // Increment the number of items in the buffer
         this->noError = true;
     }
     else // Buffer is full
@@ -52,7 +50,6 @@ bool Buffer::remove_item(buffer_item *item)
     if(!is_empty()) {
         *item = this->buffer.front();   // Capture the front item
         this->buffer.pop();             // Remove the item from the buffer
-        this->count--;                  // Decrement the number of items in the buffer
         this->noError = true;
     }
     else // Buffer is empty

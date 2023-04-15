@@ -18,14 +18,12 @@ typedef int buffer_item; // The data type of the buffer items
  * This class contains:
     * A queue object for the buffer
     * The maximum capacity of the buffer
-    * The current number of items in the buffer
     * A flag for error conditions
  */
 class Buffer {
 private:
     std::queue<buffer_item> buffer; // Buffer queue
-    int capacity;                   // Maximum capacity
-    int count;                      // Current number of items in buffer
+    long unsigned int capacity;     // Maximum capacity of buffer
     bool noError;                   // Flag for error conditions in producer/consumer
 public:
     /**
@@ -65,19 +63,19 @@ public:
      * @brief Get the number of items in the buffer
      * @return the number of items in the buffer
      */
-    int get_count() { return this->count; }
+    int get_count() { return this->buffer.size(); }
 
     /**
      * @brief Chceck if the buffer is empty
      * @return true if the buffer is empty, else false
      */
-    bool is_empty() { return (count == 0) ? true:false; }
+    bool is_empty() { return (this->buffer.size() == 0) ? true:false; }
 
     /**
      * @brief Check if the buffer is full
      * @return true if the buffer is full, else false
      */
-    bool is_full() { return (count == capacity) ? true:false; }
+    bool is_full() { return (this->buffer.size() == capacity) ? true:false; }
 
     /**
      * @brief Print the buffer

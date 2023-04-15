@@ -41,8 +41,8 @@ void *producer(void *param) {
         } else 
             cout << "Producer error condition"  << endl;    // Error (should not execute)
 
-        sem_post(&full_);               // Call post on the full_ semaphore
         pthread_mutex_unlock(&mutex_);  // Release the mutex_ lock
+        sem_post(&full_);               // Call post on the full_ semaphore
     }
 }
 
@@ -68,8 +68,8 @@ void *consumer(void *param) {
         } else
             cout << "Consumer error condition" << endl;    // Error (should not execute)
 
-        sem_post(&empty_);              // Call post on the empty_ semaphore
         pthread_mutex_unlock(&mutex_);  // Release the mutex_ lock
+        sem_post(&empty_);              // Call post on the empty_ semaphore
     }
 }
 
