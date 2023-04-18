@@ -74,19 +74,18 @@ void *consumer(void *param) {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc != 4) { // Check if more or less arguments were specified for execution
+        cout << "Expected 3 arguments, received: " << argc - 1 << endl;
+
+        return 1; // Exit the program
+    }
+
     // Declare variables and set arguments
     int sleep_time = atoi(argv[1]); // Time for threads to sleep before terminating
     int num_prods = atoi(argv[2]);  // Number of producer threads to create
     int num_cons = atoi(argv[3]);   // Number of consumer threads to create
     pthread_t producers[num_prods]; // Initialize producer thread array
     pthread_t consumers[num_cons];  // Initialize consumer thread array
-
-    // Check if more or less arguments were specified for execution
-    if (argc != 4) {
-        cout << "Expected 3 arguments, received: " << argc - 1 << endl;
-
-        return 1; // Exit the program
-    }
 
     // Initialize the mutex_ lock
     if(pthread_mutex_init(&mutex_, NULL) != 0) {
