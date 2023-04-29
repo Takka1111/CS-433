@@ -1,16 +1,14 @@
 /**
 * Assignment 5: Page replacement algorithms
  * @file replacement.h
- * @author ??? (TODO: your name)
+ * @author Abraham Gomez and Tucker Shaw
  * @brief A base class for different page replacement algorithms.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
+
 #pragma once
 
 #include "pagetable.h"
-
 
 /**
  * @brief A base class to simulate page replacement algorithms.

@@ -1,5 +1,3 @@
-// Remember to add comments to your code
-
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -20,8 +18,8 @@ int main(int argc, char *argv[]) {
     //Print basic information about the program
     std::cout << "=================================================================" << std::endl;
     std::cout << "CS 433 Programming assignment 5" << std::endl;
-    std::cout << "Author: xxxxxx and xxxxxxx" << std::endl;
-    std::cout << "Date: xx/xx/20xx" << std::endl;
+    std::cout << "Author: Abraham Gomez and Tucker Shaw" << std::endl;
+    std::cout << "Date: 05/12/2023" << std::endl;                                       // CHANGE DATE IF NECESSARY
     std::cout << "Course: CS433 (Operating Systems)" << std::endl;
     std::cout << "Description : Program to simulate different page replacement algorithms" << std::endl;
     std::cout << "=================================================================\n" << std::endl;
