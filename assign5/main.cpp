@@ -10,12 +10,11 @@
 
 // Check if an integer is power of 2
 bool isPowerOfTwo(unsigned int x) {
-    /* First x in the below expression is for the case when x is 0 */
-    return x && (!(x & (x - 1)));
+    return x && (!(x & (x - 1)));   // First x in the expression is for the case when x is 0
 }
 
 int main(int argc, char *argv[]) {
-    //Print basic information about the program
+    // Print basic information about the program
     std::cout << "=================================================================" << std::endl;
     std::cout << "CS 433 Programming assignment 5" << std::endl;
     std::cout << "Author: Abraham Gomez and Tucker Shaw" << std::endl;
@@ -25,7 +24,7 @@ int main(int argc, char *argv[]) {
     std::cout << "=================================================================\n" << std::endl;
 
     if (argc < 3) {
-        // user does not enter enough parameters
+        // User does not enter enough parameters
         std::cout << "You have entered too few parameters to run the program.  You must enter" << std::endl
                   << "two command-line arguments:" << std::endl
                   << " - page size (in bytes): between 256 and 8192, inclusive" << std::endl
@@ -34,31 +33,32 @@ int main(int argc, char *argv[]) {
     }
 
     // Page size and Physical memory size
-    // Their values should be read from command-line arguments, and always a power of 2
-    unsigned int page_size = atoi(argv[1]);
+    unsigned int page_size = atoi(argv[1]); // Their values should be read from command-line arguments, and always a power of 2
+
+    // Page Size is not a power of 2, display message and exit the program
     if (!isPowerOfTwo(page_size)) {
         std::cout << "You have entered an invalid parameter for page size (bytes)" << std::endl
                   << "  (must be an power of 2 between 256 and 8192, inclusive)." << std::endl;
         return 1;
     }
+
     unsigned int phys_mem_size = atoi(argv[2]) << 20; // convert from MB to bytes
+    
+    // Physical memory size is not a power of 2, display message and exit the program
     if (!isPowerOfTwo(phys_mem_size)) {
         std::cout << "You have entered an invalid parameter for physical memory size (MB)" << std::endl
                   << "  (must be an even integer between 4 and 64, inclusive)." << std::endl;
         return 1;
     }
 
-    // calculate number of pages and frames;
-    int logic_mem_bits = 27;        // 27-bit logical memory (128 MB logical memory assumed by the assignment)
-    int phys_mem_bits = std::log2(
-            phys_mem_size);        // Num of bits for physical memory addresses, calculated from physical memory size, e.g. 24 bits for 16 MB memory
-    int page_offset_bits = std::log2(
-            page_size);                // Num of bits for page offset, calculated from page size, e.g. 12 bits for 4096 byte page
-    // Number of pages in logical memory = 2^(logic_mem_bits - page_bit)
-    int num_pages = 1 << (logic_mem_bits - page_offset_bits);
-    // Number of free frames in physical memory = 2^(phys_mem_bits - page_offset_bits)
-    int num_frames = 1 << (phys_mem_bits - page_offset_bits);
+    // Calculate number of pages and frames
+    int logic_mem_bits = 27;                                    // 27-bit logical memory (128 MB logical memory assumed by the assignment)
+    int phys_mem_bits = std::log2(phys_mem_size);               // Num of bits for physical memory addresses, calculated from physical memory size, e.g. 24 bits for 16 MB memory
+    int page_offset_bits = std::log2(page_size);                // Num of bits for page offset, calculated from page size, e.g. 12 bits for 4096 byte page
+    int num_pages = 1 << (logic_mem_bits - page_offset_bits);   // Number of pages in logical memory = 2^(logic_mem_bits - page_bit)
+    int num_frames = 1 << (phys_mem_bits - page_offset_bits);   // Number of free frames in physical memory = 2^(phys_mem_bits - page_offset_bits)
 
+    // Display page size, physical mem size, num pages, and num physical frames being used
     std::cout << "Page size = " << page_size << " bytes" << std::endl;
     std::cout << "Physical Memory size = " << phys_mem_size << " bytes" << std::endl;
     std::cout << "Number of pages = " << num_pages << std::endl;
@@ -66,30 +66,45 @@ int main(int argc, char *argv[]) {
 
     // Test 1: Read and simulate the small list of logical addresses from the input file "small_refs.txt"
     std::cout << "\n================================Test 1==================================================\n";
+    
     std::ifstream in;
-    // Open the samll reference file
-    in.open("small_refs.txt");
+
+    in.open("small_refs.txt"); // Open the small reference file
+    
+    // Small reference file cannot be opened, display message and exit program
     if (!in.is_open()) {
         std::cerr << "Cannot open small_refs.txt to read. Please check your path." << std::endl;
         return 1;
     }
+
     int val;
-    // Create a vector to store the logical addresses
-    std::vector<int> small_refs;
+
+    std::vector<int> small_refs; // Create a vector to store the logical addresses
+
+    // Push in all logical addresses to the newly created vector
     while (in >> val) {
         small_refs.push_back(val);
     }
+
     // Create a virtual memory simulation using FIFO replacement algorithm
-    FIFOReplacement vm(num_pages, num_frames);
+    FIFOReplacement vm(num_pages, num_frames); // Construct a FIFOReplacement page table object
+
+    // Iterate through the logical addresses and simulate FIFO Replacement
     for (std::vector<int>::const_iterator it = small_refs.begin(); it != small_refs.end(); ++it) {
-        int page_num = (*it) >> page_offset_bits;
-        bool isPageFault = vm.access_page(page_num, 0);
-        PageEntry pg = vm.getPageEntry(page_num);
+        int page_num = (*it) >> page_offset_bits; // Set the page number by taking the logical address and offsetting it
+
+        bool isPageFault = vm.access_page(page_num, 0); // Check if there is a page fault and set a flag
+        
+        PageEntry pg = vm.getPageEntry(page_num); // Get the page entry from the page table
+
+        // Display current logical address, page number, frame number, and whether there is a page fault
         std::cout << "Logical address: " << *it << ", \tpage number: " << page_num;
         std::cout << ", \tframe number = " << pg.frame_num << ", \tis page fault? " << isPageFault << std::endl;
     }
-    in.close();
-    vm.print_statistics();
+
+    in.close(); // Close the small reference file
+    
+    vm.print_statistics(); // Display the current statistics
 
     // Test 2: Read and simulate the large list of logical addresses from the input file "large_refs.txt"
     std::cout << "\n================================Test 2==================================================\n";
@@ -106,4 +121,5 @@ int main(int argc, char *argv[]) {
     // TODO: Add your code to calculate number of page faults using LRU replacement algorithm
     // TODO: print the statistics and run-time
 
+    return 0;
 }

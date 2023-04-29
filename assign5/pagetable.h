@@ -8,15 +8,16 @@
 
 #pragma once
 
-#include <vector>       // for vector<PageEntry>
+#include <vector>       // for std::vector
 using namespace std;
 
-// A page table entry
 /**
  * @brief A page table entry. This class is used to represent a page table entry.
- * @details Each page has one entry in the page table. It contains the following fields:
- * - frame number
- * - valid bit
+ * @details Each page has one entry in the page table. 
+ * This class contains the following fields:
+    * The physical frame number
+    * The valid bit
+    * The dirty bit (not used)
  */
 class PageEntry
 {
@@ -26,30 +27,32 @@ public:
     bool dirty = false; // dirty bit represents whether a page is changed (not used in this assignment)
 };
 
-
 /**
  * @brief A page table is like an array of page entries.
  * The size of the page table should equal to the number of pages in logical memory
+ * This class contains:
+    * A vector to act as the array of page entries in the page table
  */
 class PageTable
 {
 private:
-    // A page table is like an array of page entries.
-    vector<PageEntry> pages;
+    vector<PageEntry> pages;    // A page table is like an array of page entries
 public:
-    // Constructor
+    /**
+     * @brief Construct a PageTable object
+     * @param num_pages
+     */
     PageTable(int num_pages);
-    // Destructor
-    ~PageTable();
 
-	// TODO: Add your implementation of the page table here
+    /**
+     * @brief Deconstruct a PageTable object
+     */
+    ~PageTable() {};
 
     /**
      * @brief Access a page in the page table.
      * @param i
-     * @return
+     * @return A reference to a page entry
      */
-    PageEntry& operator [] (int i) {
-        return pages[i];
-    }
+    PageEntry& operator [] (int i); // Operator overloader for []
 };

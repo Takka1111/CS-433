@@ -9,36 +9,47 @@
 #include <iostream>
 #include "replacement.h"
 
-// TODO: Add your implementation of the Replacement member functions here
-
 // Constructor
-Replacement::Replacement(int num_pages, int num_frames)
-: page_table(num_pages)
+Replacement::Replacement(int num_pages, int num_frames) : page_table(num_pages)
 {
-	//TODO: Add your implementation here
+	this->free_frames = num_frames; // Set counter for number of free frames in memory
 }
 
-// Destructor
-Replacement::~Replacement()
-{
-    // TOOD: Add your code here
-}
-
-// Simulate a single page access 
-// @return true if it's a page fault
+/**
+ * @brief Simulate a single page access.
+ * @details If the page is valid, it calls the touch_page function. 
+ *          If the page is not valid but free frames are available, it calls the load_page function.
+ *          If the page is not valid and there is no free frame, it calls the replace_page function.
+ * @param page_num The logical page number.
+ * @param is_write whether this access is a memory write
+ * @return whether it's a page fault: true if it's a page fault
+ */
 bool Replacement::access_page(int page_num, bool is_write)
 {
-    // TODO: Add your implementation here
-    // If the page is valid, it calls the touch_page function. 
-    // If the page is not valid but free frames are available, it calls the load_page function.
-    // If the page is not valid and there is no free frame, it calls the replace_page function.
-    return false;
+    bool isValid = this->page_table[page_num].valid;    // Check if the current page number is valid
+    bool isFault = false;                               // Create a flag for a page fault
+
+    if(isValid) // Page is valid
+        this->touch_page(page_num); // Page already in physical memory, access it
+    else { // Page is invalid
+        if(this->free_frames != 0) // Free frames are available
+            this->load_page(page_num); // Load invalid page into free frame
+        else // No free frames available
+            this->replace_page(page_num); // Replace a frame with current page, based on algorithms
+
+        isFault = true;                 // Set flag for page fault
+        this->stats.num_page_faults++;  // Update number of page faults
+    }
+
+    return isFault; // Return flag for page fault
 }
 
-// Print out statistics of simulation
+/**
+ * @brief Print the statistics of simulation
+ */
 void Replacement::print_statistics() const {
-        // TODO: print out the number of references, number of page faults and number of page replacements
-		std::cout << "Number of references: \t\t"  << std::endl;
-		std::cout << "Number of page faults: \t\t" << std::endl;
-		std::cout << "Number of page replacements: \t"  << std::endl;
+    // Print out the number of references, number of page faults and number of page replacements
+    std::cout << "Number of references: \t\t" << this->stats.num_references << std::endl;
+    std::cout << "Number of page faults: \t\t" << this->stats.num_page_faults << std::endl;
+    std::cout << "Number of page replacements: \t" << this->stats.num_page_replacements << std::endl;
 }

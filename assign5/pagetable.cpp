@@ -8,15 +8,19 @@
 
 #include "pagetable.h"
 
-// TODO: Add your implementation of PageTable
-// Constructor
-// TODO: Add your code
+/**
+ * @brief Construct a PageTable object
+ * @param num_pages
+ */
 PageTable::PageTable(int num_pages) {
-    
+    this->pages.resize(num_pages); // Set the size of the PageTable vector to the number of pages in logical memory
 }
 
-// Destructor
-// TODO: Add your code
-PageTable::~PageTable() {
-    
+/**
+ * @brief Access a page in the page table.
+ * @param i
+ * @return A reference to a page entry
+ */
+PageEntry& PageTable::operator [] (int i) {
+    return pages[i];
 }
