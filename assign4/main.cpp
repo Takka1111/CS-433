@@ -29,7 +29,7 @@ void *producer(void *param) {
 
     // Thread will continue to loop until main exits
     while (true) {
-        usleep(rand()%1000000); // Sleep for a random period of time
+        usleep(rand() % 1000000); // Sleep for a random period of time
 
         sem_wait(&empty_);              // Call wait on the empty_ semaphore
         pthread_mutex_lock(&mutex_);    // Acquire the mutex_ lock
@@ -110,11 +110,11 @@ int main(int argc, char *argv[]) {
     // Create producer thread(s).
     // Each thread has unique int ID to each producer thread, starting from 1 to number of threads
     for(int i = 0; i < num_prods; i++)
-        pthread_create(&producers[i], NULL, &producer, (void *) &(i)); // Each producer thread will run the producer function
+        pthread_create(&producers[i], NULL, producer, &i); // Each producer thread will run the producer function
     
     //Create consumer thread(s)
     for(int i = 0; i < num_cons; i++) 
-        pthread_create(&consumers[i], NULL, &consumer, NULL); // Each consumer thread will run the consumer function
+        pthread_create(&consumers[i], NULL, consumer, NULL); // Each consumer thread will run the consumer function
 
     sleep(sleep_time); // Main thread will sleep for specified amount of time
 
