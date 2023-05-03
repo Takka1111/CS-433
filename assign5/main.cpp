@@ -2,7 +2,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cmath>
-#include <time.h>
+#include <chrono>
 #include <vector>
 
 #include "fifo_replacement.h"
@@ -112,8 +112,6 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Total number of references: " << 2000000 << std::endl;
 
-    clock_t start, end; // Create a clock start and end variable to time each algorithm
-
     in.open("large_refs.txt"); // Open the small reference file
     
     // Small reference file cannot be opened, display message and exit program
@@ -134,7 +132,7 @@ int main(int argc, char *argv[]) {
     // Create a virtual memory simulation using FIFO replacement algorithm
     FIFOReplacement fifoVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
 
-    start = clock(); // Get the starting time
+    auto startTime = std::chrono::steady_clock::now(); // Get the starting time
 
     // Iterate through the logical addresses and simulate FIFO Replacement
     for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
@@ -145,20 +143,21 @@ int main(int argc, char *argv[]) {
         fifoVM.getPageEntry(page_num); // Get the page entry from the page table
     }
 
-    end = clock(); // Get the ending time
+    auto endTime = std::chrono::steady_clock::now(); // Get the ending time
+    auto duration = std::chrono::duration<double>(endTime - startTime); // Get the duration of the time
 
     in.close(); // Close the large reference file
     
     fifoVM.print_statistics(); // Display the current statistics
 
-    std::cout << "Elapsed time = " << (end - start) / double(CLOCKS_PER_SEC) << " seconds" << std::endl; // Print run-time
+    std::cout << "Elapsed time = " << duration.count() << " seconds" << std::endl; // Print run-time
 
     std::cout << "****************Simulate LIFO replacement****************************" << std::endl;
     
     // Create a virtual memory simulation using FIFO replacement algorithm
     LIFOReplacement lifoVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
 
-    start = clock(); // Get the starting time
+    startTime = std::chrono::steady_clock::now(); // Get the starting time
 
     // Iterate through the logical addresses and simulate FIFO Replacement
     for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
@@ -169,13 +168,14 @@ int main(int argc, char *argv[]) {
         lifoVM.getPageEntry(page_num); // Get the page entry from the page table
     }
 
-    end = clock(); // Get the ending time
+    endTime = std::chrono::steady_clock::now(); // Get the ending time
+    duration = std::chrono::duration<double>(endTime - startTime); // Get the duration of the time
 
     in.close(); // Close the large reference file
     
     lifoVM.print_statistics(); // Display the current statistics
 
-    std::cout << "Elapsed time = " << (end - start) / double(CLOCKS_PER_SEC) << " seconds" << std::endl; // Print run-time
+    std::cout << "Elapsed time = " << duration.count() << " seconds" << std::endl; // Print run-time
 
     std::cout << "****************Simulate LRU replacement****************************" << std::endl;
     // TODO: Add your code to calculate number of page faults using LRU replacement algorithm
