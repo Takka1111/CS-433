@@ -8,8 +8,6 @@
 
 #include "fifo_replacement.h"
 
-#include <iostream>
-
 /**
  * @brief Access an invalid page, but free frames are available.
  * Assign the page to an available  frame, not replacement needed

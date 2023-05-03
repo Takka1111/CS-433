@@ -151,11 +151,31 @@ int main(int argc, char *argv[]) {
     
     fifoVM.print_statistics(); // Display the current statistics
 
-    std::cout << "Elapsed time: " << (end - start) / double(CLOCKS_PER_SEC) << " seconds" << std::endl; // Print run-time
+    std::cout << "Elapsed time = " << (end - start) / double(CLOCKS_PER_SEC) << " seconds" << std::endl; // Print run-time
 
     std::cout << "****************Simulate LIFO replacement****************************" << std::endl;
-    // TODO: Add your code to calculate number of page faults using LIFO replacement algorithm
-    // TODO: print the statistics and run-time
+    
+    // Create a virtual memory simulation using FIFO replacement algorithm
+    LIFOReplacement lifoVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
+
+    start = clock(); // Get the starting time
+
+    // Iterate through the logical addresses and simulate FIFO Replacement
+    for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
+        int page_num = (*it) >> page_offset_bits; // Set the page number by taking the logical address and offsetting it
+
+        lifoVM.access_page(page_num, 0); // Check if there is a page fault
+        
+        lifoVM.getPageEntry(page_num); // Get the page entry from the page table
+    }
+
+    end = clock(); // Get the ending time
+
+    in.close(); // Close the large reference file
+    
+    lifoVM.print_statistics(); // Display the current statistics
+
+    std::cout << "Elapsed time = " << (end - start) / double(CLOCKS_PER_SEC) << " seconds" << std::endl; // Print run-time
 
     std::cout << "****************Simulate LRU replacement****************************" << std::endl;
     // TODO: Add your code to calculate number of page faults using LRU replacement algorithm

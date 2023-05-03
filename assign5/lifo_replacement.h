@@ -9,13 +9,14 @@
 #pragma once
 
 #include "replacement.h"
+#include <stack>            // For std::stack
 
 /**
  * @brief A class to simulate LIFO (last in first out) page replacement algorithm.
  */
 class LIFOReplacement : public Replacement {
 private:
-    // TODO: Add necessary member variables to this class
+    stack<int> frame_table;
 
 public:
     /**
@@ -23,12 +24,12 @@ public:
      * @param num_pages Total number of available free frames.
      * @param num_frames Total number of free frames.
      */
-    LIFOReplacement(int num_pages, int num_frames);
+    LIFOReplacement(int num_pages, int num_frames) : Replacement(num_pages, num_frames) {};
 
     /**
     * @brief Destructor
     */
-    virtual ~LIFOReplacement();
+    virtual ~LIFOReplacement() {};
 
     /**
      * @brief Access an invalid page, but free frames are available.
