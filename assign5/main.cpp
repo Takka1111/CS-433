@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cmath>
+#include <time.h>
 #include <vector>
 
 #include "fifo_replacement.h"
@@ -109,9 +110,48 @@ int main(int argc, char *argv[]) {
     // Test 2: Read and simulate the large list of logical addresses from the input file "large_refs.txt"
     std::cout << "\n================================Test 2==================================================\n";
 
+    std::cout << "Total number of references: " << 2000000 << std::endl;
+
+    clock_t start, end; // Create a clock start and end variable to time each algorithm
+
+    in.open("large_refs.txt"); // Open the small reference file
+    
+    // Small reference file cannot be opened, display message and exit program
+    if (!in.is_open()) {
+        std::cerr << "Cannot open large_refs.txt to read. Please check your path." << std::endl;
+        return 1;
+    }
+
+    std::vector<int> large_refs; // Create a vector to store the logical addresses
+
+    // Push in all logical addresses to the newly created vector
+    while (in >> val) {
+        large_refs.push_back(val);
+    }
+
     std::cout << "****************Simulate FIFO replacement****************************" << std::endl;
-    // TODO: Add your code to calculate number of page faults using FIFO replacement algorithm
-    // TODO: print the statistics and run-time
+
+    // Create a virtual memory simulation using FIFO replacement algorithm
+    FIFOReplacement fifoVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
+
+    start = clock(); // Get the starting time
+
+    // Iterate through the logical addresses and simulate FIFO Replacement
+    for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
+        int page_num = (*it) >> page_offset_bits; // Set the page number by taking the logical address and offsetting it
+
+        fifoVM.access_page(page_num, 0); // Check if there is a page fault
+        
+        fifoVM.getPageEntry(page_num); // Get the page entry from the page table
+    }
+
+    end = clock(); // Get the ending time
+
+    in.close(); // Close the large reference file
+    
+    fifoVM.print_statistics(); // Display the current statistics
+
+    std::cout << "Elapsed time: " << (end - start) / double(CLOCKS_PER_SEC) << " seconds" << std::endl; // Print run-time
 
     std::cout << "****************Simulate LIFO replacement****************************" << std::endl;
     // TODO: Add your code to calculate number of page faults using LIFO replacement algorithm

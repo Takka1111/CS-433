@@ -30,16 +30,23 @@ bool Replacement::access_page(int page_num, bool is_write)
     bool isFault = false;                               // Create a flag for a page fault
 
     if(isValid) // Page is valid
-        this->touch_page(page_num); // Page already in physical memory, access it
+        this->touch_page(page_num);     // Page already in physical memory, access it
     else { // Page is invalid
-        if(this->free_frames != 0) // Free frames are available
-            this->load_page(page_num); // Load invalid page into free frame
-        else // No free frames available
-            this->replace_page(page_num); // Replace a frame with current page, based on algorithms
+        if(this->free_frames != 0)  {   // Free frames are available
+            this->load_page(page_num);  // Load invalid page into free frame
+            this->free_frames--;        // Decrement the number of free frames
+        }
+        else { // No free frames available
+            this->replace_page(page_num);           // Replace a frame with current page, based on algorithms
+            this->stats.num_page_replacements++;    // Update number of page replacments
+        }
 
-        isFault = true;                 // Set flag for page fault
+        isFault = true;                 // Set the flag
+
         this->stats.num_page_faults++;  // Update number of page faults
     }
+
+    this->stats.num_references++;   // Update the number of references
 
     return isFault; // Return flag for page fault
 }

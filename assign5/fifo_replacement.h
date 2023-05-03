@@ -9,13 +9,14 @@
 #pragma once
 
 #include "replacement.h"
+#include <queue>            // For std::queue
 
 /**
  * @brief A class to simulate FIFO page replacement algorithm.
  */
 class FIFOReplacement : public Replacement {
 private:
-    // TODO: Add necessary member variables to this class
+    queue<int> frame_table;  // Create a queue to simulate FIFO table
 
 public:
     /**
@@ -23,12 +24,12 @@ public:
      * @param num_pages Total number of available free frames.
      * @param num_frames Total number of free frames.
      */
-    FIFOReplacement(int num_pages, int num_frames);
+    FIFOReplacement(int num_pages, int num_frames) : Replacement(num_pages, num_frames) {};
 
     /**
     * @brief Destructor
     */
-    virtual ~FIFOReplacement();
+    virtual ~FIFOReplacement() {};
 
     /**
      * @brief Access an invalid page, but free frames are available.
