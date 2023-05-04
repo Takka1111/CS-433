@@ -23,8 +23,6 @@ struct Statistics {
     int num_page_replacements = 0;  // Stores number of page replacements
     int num_page_faults = 0;        // Stores number of page faults
     int num_references = 0;         // Stores number of references
-    double last_page_acccess = 0;   // Stores the last page access time
-    double total_time = 0;          // Stores the total amount of time
 };
 
 /**

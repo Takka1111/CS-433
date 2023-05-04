@@ -8,31 +8,48 @@
 
 #include "lru_replacement.h"
 
-// TODO: Add your implementation here
-LRUReplacement::LRUReplacement(int num_pages, int num_frames) : Replacement(num_pages, num_frames)
-{
-    // TODO: Complete this constructor
-}
-
-// TODO: Add your implementations for desctructor, touch_page, load_page, replace_page here
-LRUReplacement::~LRUReplacement()
-{
-    // TODO: Add necessary code here
-}
-
-// Accesss a page alreay in physical memory
+/**
+ * @brief Accesss a page already in physical memory
+ * It may be overridden in a subclass 
+ * @param page_num The logical page number.
+ */
 void LRUReplacement::touch_page(int page_num)
 {
-    // TODO: Update your data structure LRU replacement
+    auto i = this->frame_table.find(page_num);                  // Get the iterator from the map
+    this->references.erase(i->second);                          // Erase the page number from its current spot
+    this->references.push_front(page_num);                      // Push the new page number into the list at the front
+    this->frame_table[page_num] = this->references.begin();     // Get the iterator and set it into the map
 }
 
-// Access an invalid page, but free frames are available
-void LRUReplacement::load_page(int page_num) {
-    // TODO: Update your data structure LRU replacement and pagetable
+/**
+ * @brief Access an invalid page, but free frames are available.
+ * Assign the page to an available  frame, not replacement needed
+ * @param page_num The logical page number.
+ */
+void LRUReplacement::load_page(int page_num) 
+{
+    this->references.push_front(page_num);                  // Push the new page number into the list
+    this->frame_table[page_num] = this->references.begin(); // Add the list's iterator to the map
+    this->page_table[page_num].valid = 1;                   // Set the new page number's valid bit to true
 }
 
-// Access an invalid page and no free frames are available
-int LRUReplacement::replace_page(int page_num) {
-    // TODO: Update your data structure LRU replacement and pagetable
+/**
+ * @brief Access an invalid page, and there is no free frame.
+ * Replace the page with the page that has been in memory the longest.
+ * @param page_num The logical page number.
+ * @return Selected victim page #
+ */
+int LRUReplacement::replace_page(int page_num) 
+{
+    int old_page_num = this->references.back();             // Get the old page number
+    this->page_table[old_page_num].valid = 0;               // Set the old page number's valid bit to false
+
+    this->references.pop_back();                            // Pop the old page number from the list
+    this->frame_table.erase(old_page_num);                  // Erase that iterator from the map
+    this->references.push_front(page_num);                  // Push the new page number into the list
+    this->frame_table[page_num] = this->references.begin(); // Add the iterator to the map
+
+    this->page_table[page_num].valid = 1;                   // Set the new page number's valid bit to true
+
     return 0;
 }

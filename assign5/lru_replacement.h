@@ -8,26 +8,30 @@
 
 #pragma once
 
-#include "replacement.h"
+#include "replacement.h" 
+#include <unordered_map>    // For std::unordered_map
+#include <list>             // For std::list
 
 /**
  * @brief A class to simulate the least recently used (LRU) page replacement algorithm.
  */
 class LRUReplacement : public Replacement
 {
-	// TODO: Add your implementation to this class
+    unordered_map<int, list<int>::iterator> frame_table;    // Create a map to store page numbers
+    list<int> references;                                   // Create a list to track least recently used page number
+
 public:
 	/**
 	 * @brief Constructor
 	 * @param num_pages 
 	 * @param num_frames 
 	 */
-	LRUReplacement(int num_pages, int num_frames);
+	LRUReplacement(int num_pages, int num_frames) : Replacement(num_pages, num_frames) {}; 
 	
     /**
     * @brief Destructor
     */
-    virtual ~LRUReplacement();
+    virtual ~LRUReplacement() {};
 
     /**
      * @brief Accesss a page alreay in physical memory
@@ -50,5 +54,4 @@ public:
      * @return Selected victim page #
      */
     virtual int replace_page(int page_num);
-
 };

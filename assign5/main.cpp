@@ -127,6 +127,8 @@ int main(int argc, char *argv[]) {
         large_refs.push_back(val);
     }
 
+    in.close(); // Close the large reference file
+
     std::cout << "****************Simulate FIFO replacement****************************" << std::endl;
 
     // Create a virtual memory simulation using FIFO replacement algorithm
@@ -145,8 +147,6 @@ int main(int argc, char *argv[]) {
 
     auto endTime = std::chrono::steady_clock::now(); // Get the ending time
     auto duration = std::chrono::duration<double>(endTime - startTime); // Get the duration of the time
-
-    in.close(); // Close the large reference file
     
     fifoVM.print_statistics(); // Display the current statistics
 
@@ -170,16 +170,33 @@ int main(int argc, char *argv[]) {
 
     endTime = std::chrono::steady_clock::now(); // Get the ending time
     duration = std::chrono::duration<double>(endTime - startTime); // Get the duration of the time
-
-    in.close(); // Close the large reference file
     
     lifoVM.print_statistics(); // Display the current statistics
 
     std::cout << "Elapsed time = " << duration.count() << " seconds" << std::endl; // Print run-time
 
     std::cout << "****************Simulate LRU replacement****************************" << std::endl;
-    // TODO: Add your code to calculate number of page faults using LRU replacement algorithm
-    // TODO: print the statistics and run-time
+    
+    // Create a virtual memory simulation using FIFO replacement algorithm
+    LRUReplacement lruVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
+
+    startTime = std::chrono::steady_clock::now(); // Get the starting time
+
+    // Iterate through the logical addresses and simulate FIFO Replacement
+    for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
+        int page_num = (*it) >> page_offset_bits; // Set the page number by taking the logical address and offsetting it
+
+        lruVM.access_page(page_num, 0); // Check if there is a page fault
+        
+        lruVM.getPageEntry(page_num); // Get the page entry from the page table
+    }
+
+    endTime = std::chrono::steady_clock::now(); // Get the ending time
+    duration = std::chrono::duration<double>(endTime - startTime); // Get the duration of the time
+    
+    lruVM.print_statistics(); // Display the current statistics
+
+    std::cout << "Elapsed time = " << duration.count() << " seconds" << std::endl; // Print run-time
 
     return 0;
 }
