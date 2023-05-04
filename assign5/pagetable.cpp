@@ -12,7 +12,8 @@
  * @brief Construct a PageTable object
  * @param num_pages
  */
-PageTable::PageTable(int num_pages) {
+PageTable::PageTable(int num_pages) 
+{
     this->pages.resize(num_pages); // Set the size of the PageTable vector to the number of pages in logical memory
 }
 
@@ -21,6 +22,7 @@ PageTable::PageTable(int num_pages) {
  * @param i
  * @return A reference to a page entry
  */
-PageEntry& PageTable::operator [] (int i) {
-    return pages[i];
+PageEntry& PageTable::operator [] (int i) 
+{
+    return pages[i]; // Return the page entry reference
 }

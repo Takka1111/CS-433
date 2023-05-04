@@ -23,8 +23,8 @@ class PageEntry
 {
 public:
 	int frame_num;      // Physical frame number for a given page
-	bool valid = false; // valid bit represents whether a page is in the physical memory
-    bool dirty = false; // dirty bit represents whether a page is changed (not used in this assignment)
+	bool valid = false; // Valid bit represents whether a page is in the physical memory
+    bool dirty = false; // Dirty bit represents whether a page is changed (not used in this assignment)
 };
 
 /**

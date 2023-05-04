@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     std::cout << "=================================================================" << std::endl;
     std::cout << "CS 433 Programming assignment 5" << std::endl;
     std::cout << "Author: Abraham Gomez and Tucker Shaw" << std::endl;
-    std::cout << "Date: 05/12/2023" << std::endl;                                       // CHANGE DATE IF NECESSARY
+    std::cout << "Date: 05/03/2023" << std::endl;
     std::cout << "Course: CS433 (Operating Systems)" << std::endl;
     std::cout << "Description : Program to simulate different page replacement algorithms" << std::endl;
     std::cout << "=================================================================\n" << std::endl;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 
         fifoVM.access_page(page_num, 0); // Check if there is a page fault
         
-        fifoVM.getPageEntry(page_num); // Get the page entry from the page table
+        //fifoVM.getPageEntry(page_num); // Get the page entry from the page table
     }
 
     auto endTime = std::chrono::steady_clock::now(); // Get the ending time
@@ -154,18 +154,16 @@ int main(int argc, char *argv[]) {
 
     std::cout << "****************Simulate LIFO replacement****************************" << std::endl;
     
-    // Create a virtual memory simulation using FIFO replacement algorithm
-    LIFOReplacement lifoVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
+    // Create a virtual memory simulation using LIFO replacement algorithm
+    LIFOReplacement lifoVM(num_pages, num_frames); // Construct a LIFOReplacement page table object
 
     startTime = std::chrono::steady_clock::now(); // Get the starting time
 
-    // Iterate through the logical addresses and simulate FIFO Replacement
+    // Iterate through the logical addresses and simulate LIFO Replacement
     for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
         int page_num = (*it) >> page_offset_bits; // Set the page number by taking the logical address and offsetting it
 
         lifoVM.access_page(page_num, 0); // Check if there is a page fault
-        
-        lifoVM.getPageEntry(page_num); // Get the page entry from the page table
     }
 
     endTime = std::chrono::steady_clock::now(); // Get the ending time
@@ -177,18 +175,16 @@ int main(int argc, char *argv[]) {
 
     std::cout << "****************Simulate LRU replacement****************************" << std::endl;
     
-    // Create a virtual memory simulation using FIFO replacement algorithm
-    LRUReplacement lruVM(num_pages, num_frames); // Construct a FIFOReplacement page table object
+    // Create a virtual memory simulation using LRu replacement algorithm
+    LRUReplacement lruVM(num_pages, num_frames); // Construct a LRUReplacment page table object
 
     startTime = std::chrono::steady_clock::now(); // Get the starting time
 
-    // Iterate through the logical addresses and simulate FIFO Replacement
+    // Iterate through the logical addresses and simulate LRU Replacement
     for (std::vector<int>::const_iterator it = large_refs.begin(); it != large_refs.end(); ++it) {
         int page_num = (*it) >> page_offset_bits; // Set the page number by taking the logical address and offsetting it
 
         lruVM.access_page(page_num, 0); // Check if there is a page fault
-        
-        lruVM.getPageEntry(page_num); // Get the page entry from the page table
     }
 
     endTime = std::chrono::steady_clock::now(); // Get the ending time

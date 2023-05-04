@@ -9,7 +9,11 @@
 #include <iostream>
 #include "replacement.h"
 
-// Constructor
+/**
+ * @brief Constructor
+ * @param num_pages Total number of logical pages for the simulation.
+ * @param num_frames Total number of available free frames.
+ */
 Replacement::Replacement(int num_pages, int num_frames) : page_table(num_pages)
 {
 	this->free_frames = num_frames; // Set counter for number of free frames in memory

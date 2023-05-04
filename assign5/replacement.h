@@ -42,7 +42,7 @@ protected: // Subclasses can access these members
 	
 public:
 	/**
-	 * @brief 
+	 * @brief Constructor
 	 * @param num_pages Total number of logical pages for the simulation.
 	 * @param num_frames Total number of available free frames.
 	 */
